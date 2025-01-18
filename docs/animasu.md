@@ -7,13 +7,13 @@ pertama tama import package animaku terlebih dahulu
 ### ES6
 
 ```ts
-import { animasu } from "animaku";
+import { animasu } from "yaoi";
 ```
 
 ### CommonJS
 
 ```ts
-const { animasu } = require("animaku");
+const { animasu } = require("yaoi");
 ```
 
 ## 1. Get Animes
