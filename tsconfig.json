@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // Target versi JavaScript
+    "module": "CommonJS", // Tipe module yang digunakan (umum untuk Node.js)
+    "declaration": true, // Menghasilkan file .d.ts
+    "allowJs": true, // Mengizinkan file JavaScript di proyek
+    "declarationMap": true, // Menyertakan peta sumber untuk deklarasi tipe
+    "emitDeclarationOnly": false, // Output file JS dan file .d.ts
+    "outDir": "./dist", // Direktori keluaran hasil build
+    "rootDir": "./src", // Direktori sumber file TypeScript
+    "esModuleInterop": true, // Mendukung default import dari CommonJS
+    "forceConsistentCasingInFileNames": true, // Mencegah perbedaan nama file
+    "strict": true, // Mengaktifkan pemeriksaan ketat TypeScript
+    "skipLibCheck": true // Mengabaikan pemeriksaan file deklarasi di node_modules
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "docs"]
+}

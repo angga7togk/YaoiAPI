@@ -1,0 +1,47 @@
+{
+  "name": "yaoi",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
+    "pack": "npm pack --pack-destination=./packs",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "test": "node test/index.js"
+  },
+  "keywords": [
+    "yaoi",
+    "animeapi",
+    "api",
+    "animestreamapi",
+    "waifuapi"
+  ],
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/angga7togk/YaoiAPI"
+  },
+  "author": "Angga7Togk",
+  "license": "MIT",
+  "description": "anime stream scraping",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.35",
+    "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "node-cache": "^5.1.2"
+  }
+}
