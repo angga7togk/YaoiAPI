@@ -38,9 +38,9 @@ async function getAnimes(
           s: params?.search || "",
           halaman: params?.page || 1,
           urutan: params?.sort || "update",
-          "genre[]": params?.genres || [],
-          "season[]": params?.seasons || [],
-          "karakter[]": params?.characterTypes || [],
+          "genre[]": params?.genre !== undefined ? [params.genre] : params?.genres || [],
+          "season[]": params?.season !== undefined ? [params.season] : params?.seasons || [],
+          "karakter[]": params?.characterType !== undefined ? [params.characterType] : params?.characterTypes || [],
           status: params?.status || "",
           tipe: params?.type || "",
         },
@@ -501,7 +501,11 @@ export async function getAnimesByAlphabet(
   option?: Option
 ): Promise<ResponsePagination> {
   try {
-    // Fetch data from the URL
+    const cacheKey = `${PREFIX_CACHE}-animes-by-alphabet-${alphabet}-${page}`;
+    const cachedData = cache.get<ResponsePagination>(cacheKey);
+    if (cachedData && !option?.noCache) {
+      return cachedData;
+    }
     const res = await axios.get(`${BASE_URL}/daftar-anime/page/${page}/`, {
       params: {
         show: alphabet.toUpperCase(), // Convert alphabet to uppercase
@@ -546,7 +550,6 @@ export async function getAnimesByAlphabet(
         ? "ONGOING"
         : "UPCOMING";
 
-      // Push anime to the array
       animes.push({
         title,
         slug,
@@ -557,15 +560,17 @@ export async function getAnimesByAlphabet(
       });
     });
 
-    // Return the anime data along with the hasNext flag
-    return {
+    const result =  {
       hasNext,
       data: animes,
     };
+
+    cache.set(cacheKey, result);
+    return result;
+
   } catch (error) {
     console.error("Error fetching anime data:", error);
 
-    // Return an empty response on error
     return {
       hasNext: false,
       data: [],
