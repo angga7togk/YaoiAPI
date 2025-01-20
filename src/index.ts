@@ -14,17 +14,17 @@ axios.defaults.headers.common["User-Agent"] =
 
 export const animasu = animasuProvider;
 
-(async () => {
-  setInterval(async () => {
-    const animes = await animasuProvider.getAnimes({
-      sort: "update",
-    });
-    const animeNew = animes.data[0];
-    const animeInCache = cache.get<AnimeSimple>("anime-update");
+// (async () => {
+//   setInterval(async () => {
+//     const animes = await animasuProvider.getAnimes({
+//       sort: "update",
+//     });
+//     const animeNew = animes.data[0];
+//     const animeInCache = cache.get<AnimeSimple>("anime-update");
 
-    if (animeNew.slug !== animeInCache?.slug) {
-      eventEmitter.emit("anime-update", animeNew);
-    }
-    cache.set("anime-update", animeNew);
-  }, 1000 * 60 * 10);
-})();
+//     if (animeNew.slug !== animeInCache?.slug) {
+//       eventEmitter.emit("anime-update", animeNew);
+//     }
+//     cache.set("anime-update", animeNew);
+//   }, 1000 * 60 * 10);
+// })();

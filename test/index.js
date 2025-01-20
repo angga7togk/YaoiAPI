@@ -1,3 +1,3 @@
 const { animasu } = require("../dist/index");
 
-animasu.getAnime("sorairo-utility-tv");
+animasu.getAnimesByAlphabet("a", 2).then(console.log);

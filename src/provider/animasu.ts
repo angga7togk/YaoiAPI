@@ -493,6 +493,86 @@ async function getScheduleAnimes(option?: Option): Promise<Schedules> {
   }
   return schedules;
 }
+
+
+export async function getAnimesByAlphabet(
+  alphabet: string,
+  page: number = 1,
+  option?: Option
+): Promise<ResponsePagination> {
+  try {
+    // Fetch data from the URL
+    const res = await axios.get(`${BASE_URL}/daftar-anime/page/${page}/`, {
+      params: {
+        show: alphabet.toUpperCase(), // Convert alphabet to uppercase
+      },
+    });
+
+    // Parse the HTML response using Cheerio
+    const $ = cheerio.load(res.data);
+
+    // Determine if there is a next page
+    const hasNext =
+      $(".hpage .r").length > 0 || $(".pagination .next").length > 0;
+
+    // Array to store anime data
+    const animes: AnimeSimple[] = [];
+
+    // Iterate through each element matching the class .bx
+    $(".bx").each((index, el) => {
+      const $$ = $(el);
+
+      // Extract image data
+      const image = $$.find(".imgx img")?.attr("data-src")?.trim() || "";
+
+      // Extract title and slug
+      const title = $$.find(".inx h2 a").text().trim();
+      let slug = $$.find(".inx h2 a").attr("href") || "";
+      slug = slug.substring(0, slug.lastIndexOf("/")).split("/").pop() || "";
+
+      // Extract type
+      const type = $($$.find(".inx span").get(3)).text().trim();
+
+      // Extract episode
+      const episode = $($$.find(".inx span").get(4))
+        .text()
+        .trim()
+        .replace(", ", "");
+
+      // Extract status
+      const status = $$.find(".inx span:contains('[Selesai]')").length
+        ? "COMPLETE"
+        : $$.find(".inx span:contains('Ongoing')").length
+        ? "ONGOING"
+        : "UPCOMING";
+
+      // Push anime to the array
+      animes.push({
+        title,
+        slug,
+        image,
+        type,
+        episode,
+        status,
+      });
+    });
+
+    // Return the anime data along with the hasNext flag
+    return {
+      hasNext,
+      data: animes,
+    };
+  } catch (error) {
+    console.error("Error fetching anime data:", error);
+
+    // Return an empty response on error
+    return {
+      hasNext: false,
+      data: [],
+    };
+  }
+}
+
 export default {
   getAnimes,
   getAnime,
@@ -501,4 +581,5 @@ export default {
   getCharacters,
   getAnimesByDay,
   getScheduleAnimes,
+  getAnimesByAlphabet
 };
