@@ -47,6 +47,7 @@ export interface AnimeDetail {
   author: string;
   genres: Genre[];
   status: string;
+  characterTypes: Character[];
   aired: string;
   type: string;
   episode: string;
@@ -87,4 +88,8 @@ export interface AnimesParams {
   season?: string;
   status?: string;
   sort?: string;
+}
+
+export interface AnimeParams {
+  slug: string;
 }

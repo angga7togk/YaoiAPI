@@ -14,10 +14,9 @@ import {
 import axios from "axios";
 import * as cheerio from "cheerio";
 import cache from "../cache";
-
 const PREFIX_CACHE = "animasu";
-const BASE_URL = process.env.ANIMASU_BASE_URL || "https://v8.animasu.cc";
-
+const BASE_URL = process.env.ANIMASU_BASE_URL || "https://v9.animasu.cc";
+          
 async function getAnimes(
   params?: AnimesParams,
   option?: Option
@@ -38,11 +37,18 @@ async function getAnimes(
           s: params?.search || "",
           halaman: params?.page || 1,
           urutan: params?.sort || "update",
-          "genre[]": params?.genre !== undefined ? [params.genre] : params?.genres || [],
-          "season[]": params?.season !== undefined ? [params.season] : params?.seasons || [],
-          "karakter[]": params?.characterType !== undefined ? [params.characterType] : params?.characterTypes || [],
+          "genre[]":
+            params?.genre !== undefined ? [params.genre] : params?.genres || [],
+          "season[]":
+            params?.season !== undefined
+              ? [params.season]
+              : params?.seasons || [],
+          "karakter[]":
+            params?.characterType !== undefined
+              ? [params.characterType]
+              : params?.characterTypes || [],
           status: params?.status || "",
-          tipe: params?.type || "",
+          tipe: params?.type || "",   
         },
       }
     );
@@ -107,8 +113,6 @@ async function getAnime(
       return cachedData;
     }
     const res = await axios.get(`${BASE_URL}/anime/${slug}/`);
-
-    
 
     const $ = cheerio.load(res.data);
 
@@ -238,6 +242,20 @@ async function getAnime(
           });
         });
     });
+
+    const characterTypes: Character[] = [];
+    try{
+      $("#tikar_shw a").each((index, el) => {
+        const href = $(el).attr("href") || "";
+        const name = $(el).text().trim();
+        const slug = href.split("/")[4] || "";
+        characterTypes.push({
+          name,
+          slug,
+        });
+      })
+    }catch(er){}
+
     const data = {
       slug,
       title,
@@ -247,6 +265,7 @@ async function getAnime(
       rating: Number(rating.split(" ")[1]) || 0,
       author,
       genres,
+      characterTypes,
       status,
       aired: aired || "Unknown",
       type: type || "Unknown",
@@ -494,7 +513,6 @@ async function getScheduleAnimes(option?: Option): Promise<Schedules> {
   return schedules;
 }
 
-
 export async function getAnimesByAlphabet(
   alphabet: string,
   page: number = 1,
@@ -560,14 +578,13 @@ export async function getAnimesByAlphabet(
       });
     });
 
-    const result =  {
+    const result = {
       hasNext,
       data: animes,
     };
 
     cache.set(cacheKey, result);
     return result;
-
   } catch (error) {
     console.error("Error fetching anime data:", error);
 
@@ -586,5 +603,5 @@ export default {
   getCharacters,
   getAnimesByDay,
   getScheduleAnimes,
-  getAnimesByAlphabet
+  getAnimesByAlphabet,
 };

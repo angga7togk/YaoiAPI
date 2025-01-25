@@ -1,21 +1,22 @@
+import "dotenv/config";
 import axios from "axios";
 import animasuProvider from "./provider/animasu";
-import EventEmitter from "node:events";
-import cache from "./cache";
 import { AnimeSimple } from "./types";
+import dns from "dns";
 
-export * from "./types"; // init all types in to index.d.ts 
-
-const eventEmitter = new EventEmitter();
+export * from "./types"; // init all types in to index.d.ts
 
 axios.defaults.validateStatus = () => true;
 axios.defaults.headers.common["User-Agent"] =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54";
 
-export const animasu = animasuProvider;
+const DNS_LIST = process.env.DNS ? process.env.DNS.split(",") : [];
+dns.setServers(DNS_LIST);
+
+export const animasu = animasuProvider; 
 
 // (async () => {
-//   setInterval(async () => {
+//   setInterval(async () =>   {
 //     const animes = await animasuProvider.getAnimes({
 //       sort: "update",
 //     });
