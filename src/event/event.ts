@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import { AnimeDetail, AnimeSimple, Provider, ResponsePagination } from "../types";
+import { AnimeDetail, AnimeSimple, Provider } from "../types";
 
 const eventEmitter = new EventEmitter();
 
