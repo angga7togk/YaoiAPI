@@ -4,6 +4,7 @@ import animasuProvider from "./provider/animasu";
 import { AnimeSimple } from "./types";
 import dns from "dns";
 
+export * from "./event/event"
 export * from "./types"; // init all types in to index.d.ts
 
 axios.defaults.validateStatus = () => true;

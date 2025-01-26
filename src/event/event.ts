@@ -1,19 +1,19 @@
 import EventEmitter from "events";
 import { AnimeDetail, AnimeSimple, Provider } from "../types";
 
-const eventEmitter = new EventEmitter();
+export const event = new EventEmitter();
 
 export const callGetAnimeDetail = (result: {
   provider: Provider;
   anime: AnimeDetail;
 }) => {
-  eventEmitter.emit("get-anime-detail", result)
+  event.emit("get-anime-detail", result)
 };
 
 export const callGetAnimes = (result: {
   provider: Provider;
   animes: AnimeSimple[]
 }) => {
-  eventEmitter.emit("get-animes", result)
+  event.emit("get-animes", result)
 }
 

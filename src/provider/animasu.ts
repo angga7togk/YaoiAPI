@@ -18,7 +18,7 @@ import cache from "../cache";
 import { callGetAnimeDetail, callGetAnimes } from "../event/event";
 const PREFIX_CACHE = "animasu";
 const BASE_URL = process.env.ANIMASU_BASE_URL || "https://v9.animasu.cc";
-          
+
 async function getAnimes(
   params?: AnimesParams,
   option?: Option
@@ -27,6 +27,10 @@ async function getAnimes(
     const cacheKey = `${PREFIX_CACHE}-animes-${JSON.stringify(params)}`;
     const cachedData = cache.get<ResponsePagination>(cacheKey);
     if (cachedData && !option?.noCache) {
+      callGetAnimes({
+        provider: Provider.ANIMASU,
+        animes: cachedData.data,
+      });
       return cachedData;
     }
 
@@ -50,7 +54,7 @@ async function getAnimes(
               ? [params.characterType]
               : params?.characterTypes || [],
           status: params?.status || "",
-          tipe: params?.type || "",   
+          tipe: params?.type || "",
         },
       }
     );
@@ -100,7 +104,7 @@ async function getAnimes(
     callGetAnimes({
       provider: Provider.ANIMASU,
       animes: data.data,
-    })
+    });
     return data;
   } catch (error) {
     console.error("Error saat mengambil data anime:", error);
@@ -119,6 +123,10 @@ async function getAnime(
     const cacheKey = `${PREFIX_CACHE}-anime-detail-${slug}`;
     const cachedData = cache.get<AnimeDetail>(cacheKey);
     if (cachedData && !option?.noCache) {
+      callGetAnimeDetail({
+        provider: Provider.ANIMASU,
+        anime: cachedData,
+      })
       return cachedData;
     }
     const res = await axios.get(`${BASE_URL}/anime/${slug}/`);
@@ -253,7 +261,7 @@ async function getAnime(
     });
 
     const characterTypes: Character[] = [];
-    try{
+    try {
       $("#tikar_shw a").each((index, el) => {
         const href = $(el).attr("href") || "";
         const name = $(el).text().trim();
@@ -262,8 +270,8 @@ async function getAnime(
           name,
           slug,
         });
-      })
-    }catch(er){}
+      });
+    } catch (er) {}
 
     const data = {
       slug,
@@ -293,7 +301,7 @@ async function getAnime(
     callGetAnimeDetail({
       provider: Provider.ANIMASU,
       anime: data,
-    })
+    });
     return data;
   } catch (error) {
     console.error("Error saat mengambil data anime:", error);
@@ -403,6 +411,10 @@ async function getAnimesByDay(
     const cacheKey = `${PREFIX_CACHE}-animes-by-jadwal-${day}`;
     const cachedData = cache.get<AnimeSimple[]>(cacheKey);
     if (cachedData && !option?.noCache) {
+      callGetAnimes({
+        provider: Provider.ANIMASU,
+        animes: cachedData,
+      });
       return cachedData;
     }
     const res = await axios.get(`${BASE_URL}/jadwal/`);
@@ -454,7 +466,7 @@ async function getAnimesByDay(
     callGetAnimes({
       provider: Provider.ANIMASU,
       animes,
-    })
+    });
     cache.set(cacheKey, animes);
     return animes;
   } catch (error) {
@@ -478,6 +490,12 @@ async function getScheduleAnimes(option?: Option): Promise<Schedules> {
     const cacheKey = `${PREFIX_CACHE}-schedule-animes`;
     const cachedData = cache.get<Schedules>(cacheKey);
     if (cachedData && !option?.noCache) {
+      for (const key in cachedData) {
+        callGetAnimes({
+          provider: Provider.ANIMASU,
+          animes: cachedData[key as keyof Schedules],
+        });
+      }
       return cachedData;
     }
     const res = await axios.get(`${BASE_URL}/jadwal/`);
@@ -527,7 +545,7 @@ async function getScheduleAnimes(option?: Option): Promise<Schedules> {
       callGetAnimes({
         provider: Provider.ANIMASU,
         animes,
-      })
+      });
 
       schedules[$day as keyof Schedules] = animes;
     });
@@ -547,6 +565,10 @@ export async function getAnimesByAlphabet(
     const cacheKey = `${PREFIX_CACHE}-animes-by-alphabet-${alphabet}-${page}`;
     const cachedData = cache.get<ResponsePagination>(cacheKey);
     if (cachedData && !option?.noCache) {
+      callGetAnimes({
+        provider: Provider.ANIMASU,
+        animes: cachedData.data,
+      });
       return cachedData;
     }
     const res = await axios.get(`${BASE_URL}/daftar-anime/page/${page}/`, {
@@ -613,7 +635,7 @@ export async function getAnimesByAlphabet(
     callGetAnimes({
       provider: Provider.ANIMASU,
       animes: result.data,
-    })
+    });
     return result;
   } catch (error) {
     console.error("Error fetching anime data:", error);

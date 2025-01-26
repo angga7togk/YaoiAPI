@@ -1,3 +1,8 @@
-const { animasu } = require("../dist/index");
+const { animasu, event } = require("../dist/index");
+const EventEmitter = require("events");
+(async () => {
+  await animasu.getAnimes();
+ 
 
-animasu.getAnime("tensei-shitara-slime-datta-ken-s3").then(console.log).catch(console.error);
+  for (let i = 0; ; i++) {}
+})();
