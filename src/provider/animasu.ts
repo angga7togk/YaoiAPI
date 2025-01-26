@@ -10,10 +10,12 @@ import {
   AnimesParams,
   Schedules,
   Option,
+  Provider,
 } from "../index";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import cache from "../cache";
+import { callGetAnimeDetail, callGetAnimes } from "../event/event";
 const PREFIX_CACHE = "animasu";
 const BASE_URL = process.env.ANIMASU_BASE_URL || "https://v9.animasu.cc";
           
@@ -91,7 +93,14 @@ async function getAnimes(
       data: animes,
       hasNext,
     };
+
     cache.set(cacheKey, data);
+
+    // call event
+    callGetAnimes({
+      provider: Provider.ANIMASU,
+      animes: data.data,
+    })
     return data;
   } catch (error) {
     console.error("Error saat mengambil data anime:", error);
@@ -279,6 +288,12 @@ async function getAnime(
       batches,
     };
     cache.set(cacheKey, data);
+
+    // call event
+    callGetAnimeDetail({
+      provider: Provider.ANIMASU,
+      anime: data,
+    })
     return data;
   } catch (error) {
     console.error("Error saat mengambil data anime:", error);
@@ -436,6 +451,10 @@ async function getAnimesByDay(
           });
       }
     });
+    callGetAnimes({
+      provider: Provider.ANIMASU,
+      animes,
+    })
     cache.set(cacheKey, animes);
     return animes;
   } catch (error) {
@@ -503,6 +522,12 @@ async function getScheduleAnimes(option?: Option): Promise<Schedules> {
           status: status as "COMPLETE" | "ONGOING" | "UPCOMING",
         });
       });
+
+      // call event
+      callGetAnimes({
+        provider: Provider.ANIMASU,
+        animes,
+      })
 
       schedules[$day as keyof Schedules] = animes;
     });
@@ -584,6 +609,11 @@ export async function getAnimesByAlphabet(
     };
 
     cache.set(cacheKey, result);
+
+    callGetAnimes({
+      provider: Provider.ANIMASU,
+      animes: result.data,
+    })
     return result;
   } catch (error) {
     console.error("Error fetching anime data:", error);

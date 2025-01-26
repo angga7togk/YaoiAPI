@@ -93,3 +93,8 @@ export interface AnimesParams {
 export interface AnimeParams {
   slug: string;
 }
+
+export enum Provider {
+  ANIMASU = "animasu",
+  SAMEHADAKU = "samehadaku"
+}
